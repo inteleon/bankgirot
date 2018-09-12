@@ -6,20 +6,20 @@ use Exception;
 
 class Importer
 {
-    private static $rows;
-    private static $current_row;
-    private static $first_account;
-    private static $first_transaction;
+    private $rows;
+    private $current_row;
+    private $first_account;
+    private $first_transaction;
 
-    public static function parse($string)
+    public function parse($string)
     {
-        self::$rows = explode("\n", str_replace("\n\r", "\n", $string));
-        self::$current_row = 0;
+        $this->rows = explode("\n", str_replace("\n\r", "\n", $string));
+        $this->current_row = 0;
 
-        return self::parseFile();
+        return $this->parseFile();
     }
 
-    public static function verify(File $BGMaxFile)
+    public function verify(File $BGMaxFile)
     {
         if ($BGMaxFile->layout_name != 'BGMAX') {
             return 'Wrong layout name. Expected: BGMAX, Got: ' . $BGMaxFile->layout_name;
@@ -52,24 +52,24 @@ class Importer
                 }
             }
 
-            if (!self::almostEquals($account_transaction_count, $account->num_transactions)) {
+            if (!$this->almostEquals($account_transaction_count, $account->num_transactions)) {
                 return 'Wrong number of transactions on account. Expected: ' . $account->num_transactions . ', Got: ' . $account_transaction_count;
             }
-            if (!self::almostEquals($account_transaction_amount, $account->amount)) {
+            if (!$this->almostEquals($account_transaction_amount, $account->amount)) {
                 return 'Wrong sum of transactions on account. Expected: ' . $account->amount . ', Got: ' . $account_transaction_amount;
             }
         }
 
-        if (!self::almostEquals($total_transaction_count, $BGMaxFile->num_transactions)) {
+        if (!$this->almostEquals($total_transaction_count, $BGMaxFile->num_transactions)) {
             return 'Wrong number of transactions. Expected: ' . $BGMaxFile->num_transactions . ', Got: ' . $total_transaction_count;
         }
-        if (!self::almostEquals($total_deduction_count, $BGMaxFile->num_deductions)) {
+        if (!$this->almostEquals($total_deduction_count, $BGMaxFile->num_deductions)) {
             return 'Wrong number of deductions. Expected: ' . $BGMaxFile->num_deductions . ', Got: ' . $total_deduction_count;
         }
-        if (!self::almostEquals($total_extra_ref_count, $BGMaxFile->num_extra_ref)) {
+        if (!$this->almostEquals($total_extra_ref_count, $BGMaxFile->num_extra_ref)) {
             return 'Wrong number of extrarefs. Expected: ' . $BGMaxFile->num_deductions . ', Got: ' . $total_extra_ref_count;
         }
-        if (!self::almostEquals($total_account_count, $BGMaxFile->num_accounts)) {
+        if (!$this->almostEquals($total_account_count, $BGMaxFile->num_accounts)) {
             return 'Wrong number of accounts. Expected: ' . $BGMaxFile->num_accounts . ', Got: ' . $total_account_count;
         }
 
@@ -77,172 +77,172 @@ class Importer
     }
 
     // Privates
-    private static function parseFile()
+    private function parseFile()
     {
         $result = new File();
 
-        if (self::getData(1, 2) == '01') { // Starpost
-            $datetime_str = self::getData(25, 44);
-            $result->layout_name = trim(self::getData(3, 22));
-            $result->layout_version = intval(self::getData(23, 24));
+        if ($this->getData(1, 2) == '01') { // Starpost
+            $datetime_str = $this->getData(25, 44);
+            $result->layout_name = trim($this->getData(3, 22));
+            $result->layout_version = intval($this->getData(23, 24));
             $result->datetime = substr($datetime_str, 0, 4).'-'.substr($datetime_str, 4, 2).'-'.substr($datetime_str, 6, 2).' '.substr($datetime_str, 8, 2).':'.substr($datetime_str, 10, 2).':'.substr($datetime_str, 12, 2);
-            $result->test_marker = self::getData(45, 45);
-            self::nextRow();
+            $result->test_marker = $this->getData(45, 45);
+            $this->nextRow();
         } else {
-            throw new Exception('Expected 01, got '.self::getData(1, 2).' row: '.(self::$current_row + 1));
+            throw new Exception('Expected 01, got '.$this->getData(1, 2).' row: '.($this->current_row + 1));
         }
 
-        self::$first_account = true;
-        while (self::parseAccounts($result)) {
+        $this->first_account = true;
+        while ($this->parseAccounts($result)) {
         }
 
-        if (self::getData(1, 2) == '70') { // Slutpost
-            $result->num_transactions = intval(self::getData(3, 10));
-            $result->num_deductions = intval(self::getData(11, 18));
-            $result->num_extra_ref = intval(self::getData(19, 26));
-            $result->num_accounts = intval(self::getData(27, 34));
-            self::nextRow();
+        if ($this->getData(1, 2) == '70') { // Slutpost
+            $result->num_transactions = intval($this->getData(3, 10));
+            $result->num_deductions = intval($this->getData(11, 18));
+            $result->num_extra_ref = intval($this->getData(19, 26));
+            $result->num_accounts = intval($this->getData(27, 34));
+            $this->nextRow();
         } else {
-            throw new Exception('Expected 70, got '.self::getData(1, 2).' row: '.(self::$current_row + 1));
+            throw new Exception('Expected 70, got '.$this->getData(1, 2).' row: '.($this->current_row + 1));
         }
 
         return $result;
     }
 
-    public static function parseAccounts(File &$result)
+    public function parseAccounts(File &$result)
     {
         $account = new Account();
 
-        if (self::getData(1, 2) == '05') { // Öppningspost
-            $account->bankgiro = self::getData(3, 12);
-            $account->plusgiro = self::getData(13, 22);
-            $account->currency = trim(self::getData(23, 25));
-            self::nextRow();
+        if ($this->getData(1, 2) == '05') { // Öppningspost
+            $account->bankgiro = $this->getData(3, 12);
+            $account->plusgiro = $this->getData(13, 22);
+            $account->currency = trim($this->getData(23, 25));
+            $this->nextRow();
         } else {
-            if (self::$first_account) {
-                throw new Exception('Expected 05, got '.self::getData(1, 2).' row: '.(self::$current_row + 1));
+            if ($this->first_account) {
+                throw new Exception('Expected 05, got '.$this->getData(1, 2).' row: '.($this->current_row + 1));
             } else {
                 return false;
             }
         }
 
-        self::$first_transaction = true;
-        while (self::parseTransaction($account)) {
+        $this->first_transaction = true;
+        while ($this->parseTransaction($account)) {
         }
 
-        if (self::getData(1, 2) == '15') { // Insättningspost
-            $date_str = self::getData(38, 45);
-            $account->bank_account = self::getData(3, 37);
+        if ($this->getData(1, 2) == '15') { // Insättningspost
+            $date_str = $this->getData(38, 45);
+            $account->bank_account = $this->getData(3, 37);
             $account->date = substr($date_str, 0, 4).'-'.substr($date_str, 4, 2).'-'.substr($date_str, 6, 2);
-            $account->serial_number = intval(self::getData(46, 50));
-            $account->amount = intval(self::getData(51, 68)) / 100;
-            $account->currency2 = trim(self::getData(69, 71));
-            $account->num_transactions = intval(self::getData(72, 79));
-            $account->type = self::getData(80, 80);
-            self::nextRow();
+            $account->serial_number = intval($this->getData(46, 50));
+            $account->amount = intval($this->getData(51, 68)) / 100;
+            $account->currency2 = trim($this->getData(69, 71));
+            $account->num_transactions = intval($this->getData(72, 79));
+            $account->type = $this->getData(80, 80);
+            $this->nextRow();
         } else {
-            throw new Exception('Expected 15, got '.self::getData(1, 2).' row: '.(self::$current_row + 1));
+            throw new Exception('Expected 15, got '.$this->getData(1, 2).' row: '.($this->current_row + 1));
         }
 
         $result->accounts[] = $account;
-        self::$first_account = false;
+        $this->first_account = false;
 
         return true;
     }
 
-    public static function parseTransaction(Account &$account)
+    public function parseTransaction(Account &$account)
     {
         $transaction = new Transaction();
 
-        if (self::getData(1, 2) == '20' || self::getData(1, 2) == '21') { // Betalningspost / Avdragspost
-            self::parseRefNum($transaction);
-            if (self::getData(1, 2) == '21') {
+        if ($this->getData(1, 2) == '20' || $this->getData(1, 2) == '21') { // Betalningspost / Avdragspost
+            $this->parseRefNum($transaction);
+            if ($this->getData(1, 2) == '21') {
                 $transaction->deduction = true;
-                $transaction->deduction_code = self::getData(71, 71);
+                $transaction->deduction_code = $this->getData(71, 71);
             }
-            self::nextRow();
+            $this->nextRow();
         } else {
-            if (self::$first_transaction) {
-                throw new Exception('Expected 20|21, got '.self::getData(1, 2).' row: '.(self::$current_row + 1));
+            if ($this->first_transaction) {
+                throw new Exception('Expected 20|21, got '.$this->getData(1, 2).' row: '.($this->current_row + 1));
             } else {
                 return false;
             }
         }
 
-        while (self::getData(1, 2) == '22' || self::getData(1, 2) == '23') { // Extra referensnummerpost
+        while ($this->getData(1, 2) == '22' || $this->getData(1, 2) == '23') { // Extra referensnummerpost
             $ref_num = new RefNum();
-            self::parseRefNum($ref_num);
-            if (self::getData(1, 2) == '23') {
+            $this->parseRefNum($ref_num);
+            if ($this->getData(1, 2) == '23') {
                 $ref_num->amount = -$ref_num->amount;
             }
             $transaction->extra_ref_num[] = $ref_num;
-            self::nextRow();
+            $this->nextRow();
         }
 
-        while (self::getData(1, 2) == '25') { // Informationspost
-            $transaction->information[] = trim(self::getData(3, 52));
-            self::nextRow();
+        while ($this->getData(1, 2) == '25') { // Informationspost
+            $transaction->information[] = trim($this->getData(3, 52));
+            $this->nextRow();
         }
 
-        if (self::getData(1, 2) == '26') { // Namnpost
-            $transaction->name = trim(self::getData(3, 37));
-            $transaction->extra_name = trim(self::getData(38, 72));
-            self::nextRow();
+        if ($this->getData(1, 2) == '26') { // Namnpost
+            $transaction->name = trim($this->getData(3, 37));
+            $transaction->extra_name = trim($this->getData(38, 72));
+            $this->nextRow();
         }
 
-        if (self::getData(1, 2) == '27') { // Adresspost 1
-            $transaction->address = trim(self::getData(3, 37));
-            $transaction->postal_number = trim(self::getData(38, 46));
-            self::nextRow();
+        if ($this->getData(1, 2) == '27') { // Adresspost 1
+            $transaction->address = trim($this->getData(3, 37));
+            $transaction->postal_number = trim($this->getData(38, 46));
+            $this->nextRow();
         }
 
-        if (self::getData(1, 2) == '28') { // Addresspost 2
-            $transaction->city = trim(self::getData(3, 37));
-            $transaction->country = trim(self::getData(38, 72));
-            $transaction->country_code = trim(self::getData(73, 74));
-            self::nextRow();
+        if ($this->getData(1, 2) == '28') { // Addresspost 2
+            $transaction->city = trim($this->getData(3, 37));
+            $transaction->country = trim($this->getData(38, 72));
+            $transaction->country_code = trim($this->getData(73, 74));
+            $this->nextRow();
         }
 
-        if (self::getData(1, 2) == '29') { // Organisationsnummberpost
-            $transaction->org_num = self::getData(3, 14); // PI!
-            self::nextRow();
+        if ($this->getData(1, 2) == '29') { // Organisationsnummberpost
+            $transaction->org_num = $this->getData(3, 14); // PI!
+            $this->nextRow();
         }
 
         $account->transactions[] = $transaction;
-        self::$first_transaction = false;
+        $this->first_transaction = false;
 
         return true;
     }
 
-    private static function parseRefNum(RefNum $ref_num)
+    private function parseRefNum(RefNum $ref_num)
     {
-        $ref_num->payer_bankgiro = self::getData(3, 12);
-        $ref_num->reference = trim(self::getData(13, 37)); // LEET!
-        $ref_num->amount = intval(self::getData(38, 55)) / 100;
-        $ref_num->reference_code = self::getData(56, 56);
-        $ref_num->channel_code = self::getData(57, 57);
-        $ref_num->BGC_number = self::getData(58, 69);
-        $ref_num->avi_image = self::getData(70, 70);
+        $ref_num->payer_bankgiro = $this->getData(3, 12);
+        $ref_num->reference = trim($this->getData(13, 37)); // LEET!
+        $ref_num->amount = intval($this->getData(38, 55)) / 100;
+        $ref_num->reference_code = $this->getData(56, 56);
+        $ref_num->channel_code = $this->getData(57, 57);
+        $ref_num->BGC_number = $this->getData(58, 69);
+        $ref_num->avi_image = $this->getData(70, 70);
     }
 
     /////////////////////
     // Helper Function //
     /////////////////////
-    private static function nextRow()
+    private function nextRow()
     {
-        self::$current_row++;
+        $this->current_row++;
     }
 
     // This is to make the numbers correspond to the bankgiro-documentation.
-    private static function getData($start, $end)
+    private function getData($start, $end)
     {
         $s = $start - 1;
         $e = $end - $s;
 
-        return substr(self::$rows[self::$current_row], $s, $e);
+        return substr($this->rows[$this->current_row], $s, $e);
     }
 
-    public static function almostEquals($a, $b, $epsilon = 0.0001)
+    public function almostEquals($a, $b, $epsilon = 0.0001)
     {
         return abs($a - $b) < $epsilon;
     }
