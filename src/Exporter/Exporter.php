@@ -1,6 +1,6 @@
 <?php
 
-namespace Inteleon\BGMAXtools\Exporter;
+namespace Inteleon\Bankgirot\Exporter;
 
 use Exception;
 

@@ -2,10 +2,10 @@
 
 namespace Tests\Units\Exporter;
 
-use Inteleon\BGMAXtools\Exporter\Payment;
-use Inteleon\BGMAXtools\Exporter\PaymentData;
+use Inteleon\Bankgirot\Exporter\Payment;
+use Inteleon\Bankgirot\Exporter\PaymentData;
 use Tests\Units\TestSuite;
-use Inteleon\BGMAXtools\Exporter\Exporter;
+use Inteleon\Bankgirot\Exporter\Exporter;
 
 class BankgiroTest extends TestSuite
 {
