@@ -113,7 +113,7 @@ class Importer
     {
         $account = new Account();
 
-        if ($this->getData(1, 2) == '05') { // Ã–ppningspost
+        if ($this->getData(1, 2) == '05') { // Öppningspost
             $account->bankgiro = $this->getData(3, 12);
             $account->plusgiro = $this->getData(13, 22);
             $account->currency = trim($this->getData(23, 25));
@@ -130,7 +130,7 @@ class Importer
         while ($this->parseTransaction($account)) {
         }
 
-        if ($this->getData(1, 2) == '15') { // InsÃ¤ttningspost
+        if ($this->getData(1, 2) == '15') { // Insättningspost
             $date_str = $this->getData(38, 45);
             $account->bank_account = $this->getData(3, 37);
             $account->date = substr($date_str, 0, 4).'-'.substr($date_str, 4, 2).'-'.substr($date_str, 6, 2);

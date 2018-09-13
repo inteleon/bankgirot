@@ -7,7 +7,7 @@ use Exception;
 class Exporter
 {
     private $newLineChars = "\r\n";
-    /* encodeSupplier is an implementation of Bankgiro LeverantÃ¶rsfaktura to
+    /* encodeSupplier is an implementation of Bankgiro Leverantörsfaktura to
      * be able to return an array of lines to be saved as a file to send to
      * the bank.
      *
@@ -22,7 +22,7 @@ class Exporter
         foreach ($pd->payments as $payment) {
             // Raise exception if the payment fails.
             $this->validateFields($payment);
-            // Only if "Kontantutbetalning eller kontoinsÃ¤ttning med avisering".
+            // Only if "Kontantutbetalning eller kontoinsättning med avisering".
             if ($payment->is_deposit) {
                 $records[] = $this->encodeDeposit($payment);
             }
@@ -44,7 +44,7 @@ class Exporter
             "11%010d%6d%22s%6s%13s%3s%18s%s",
             $from_bankgiro,
             $creation_date,
-            "LEVERANTÃ–RSBETALNINGAR", // XXX: This is the only valid value for this field.
+            "LEVERANTÖRSBETALNINGAR", // XXX: This is the only valid value for this field.
             $payment_date,
             "",
             "",
