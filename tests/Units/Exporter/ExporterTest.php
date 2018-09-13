@@ -4,10 +4,10 @@ namespace Tests\Units\Exporter;
 
 use Inteleon\Bankgirot\Exporter\Payment;
 use Inteleon\Bankgirot\Exporter\PaymentData;
-use Tests\Units\TestSuite;
 use Inteleon\Bankgirot\Exporter\Exporter;
+use PHPUnit\Framework\TestCase;
 
-class BankgiroTest extends TestSuite
+class ExporterTest extends TestCase
 {
     private $exporter;
     /**
@@ -21,7 +21,7 @@ class BankgiroTest extends TestSuite
     /**
      * @test
      *
-     * @covers Application\Bankgiro::encodeSupplier
+     * @covers Inteleon\Bankgirot\Exporter\Exporter::encodeSupplier
      *
      */
     public function encodeSupplier()
@@ -69,7 +69,7 @@ class BankgiroTest extends TestSuite
     /**
      * @test
      *
-     * @covers Application\Bankgiro::encodeSupplier
+     * @covers Inteleon\Bankgirot\Exporter\Exporter::encodeSupplier
      *
      */
     public function encodeSupplierWithoutPayment()
@@ -113,7 +113,7 @@ class BankgiroTest extends TestSuite
     /**
      * @test
      *
-     * @covers Application\Bankgiro::encodeSupplier
+     * @covers Inteleon\Bankgirot\Exporter\Exporter::encodeSupplier
      *
      */
     public function encodeSupplierWithPlusgiro()
@@ -153,7 +153,7 @@ class BankgiroTest extends TestSuite
     /**
      * @test
      *
-     * @covers Application\Bankgiro::encodeSupplier
+     * @covers Inteleon\Bankgirot\Exporter\Exporter::encodeSupplier
      *
      */
     public function encodeSupplierWithLongReferences()
@@ -196,7 +196,7 @@ class BankgiroTest extends TestSuite
     /**
      * @test
      *
-     * @covers Application\Bankgiro::encodeSupplier
+     * @covers Inteleon\Bankgirot\Exporter\Exporter::encodeSupplier
      *
      */
     public function encodeSupplierWithBankTxAndClearingNum()
