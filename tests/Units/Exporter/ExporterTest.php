@@ -51,7 +51,7 @@ class ExporterTest extends TestCase
         );
         $this->assertEquals(
             $v[0],
-            "110002391076171223LEVERANTÖRSBETALNINGAR                                        \r\n"
+            "110002391076171223LEVERANTÃ–RSBETALNINGAR                                        \r\n"
         );
         $this->assertEquals(
             $v[1],
@@ -99,7 +99,7 @@ class ExporterTest extends TestCase
         );
         $this->assertEquals(
             $v[0],
-            "110002391076171223LEVERANTÖRSBETALNINGAR                                        \r\n"
+            "110002391076171223LEVERANTÃ–RSBETALNINGAR                                        \r\n"
         );
         $this->assertEquals(
             $v[1],
@@ -182,7 +182,7 @@ class ExporterTest extends TestCase
         );
         $this->assertEquals(
             $v[0],
-            "110002391076171223LEVERANTÖRSBETALNINGAR                                        \r\n"
+            "110002391076171223LEVERANTÃ–RSBETALNINGAR                                        \r\n"
         );
         $this->assertEquals(
             $v[1],
@@ -206,7 +206,7 @@ class ExporterTest extends TestCase
         $p->reference = "this_is_a_very_long_reference_that_should_be_truncated";
         $p->amount = 98000;
         $p->payment_date = "060330";
-        $p->sender_reference = "åäös_is_a_very_long_reference_that_should_be_truncated";
+        $p->sender_reference = "Ã¥Ã¤Ã¶s_is_a_very_long_reference_that_should_be_truncated";
         $p->clearing_number = "8440";
         $p->sender_bankgiro = "2391076";
         $p->payment_number = "2001";
@@ -226,7 +226,7 @@ class ExporterTest extends TestCase
         );
         $this->assertEquals(
             $v[0],
-            "110002391076171223LEVERANTÖRSBETALNINGAR                                        \r\n"
+            utf8_decode("110002391076171223LEVERANTÃ–RSBETALNINGAR                                        \r\n")
         );
         $this->assertEquals(
             $v[1],
@@ -234,7 +234,7 @@ class ExporterTest extends TestCase
         );
         $this->assertEquals(
             $v[2],
-            "14000002001 this_is_a_very_long_refer000000098000060330     åäös_is_a_very_long_\r\n"
+            utf8_decode("14000002001 this_is_a_very_long_refer000000098000060330     Ã¥Ã¤Ã¶s_is_a_very_long_\r\n")
         );
         $this->assertEquals(
             $v[3],
