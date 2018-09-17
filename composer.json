@@ -1,4 +1,9 @@
 {
+  "name": "inteleon/bankgirot",
+  "descriptison": "Tools to parse and generate bankgiro-files.",
+  "require": {
+    "php": "^7.0",
+  },
   "autoload": {
     "classmap": [
       "src/"
