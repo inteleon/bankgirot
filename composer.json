@@ -1,6 +1,6 @@
 {
   "name": "inteleon/bankgirot",
-  "descriptison": "Tools to parse and generate bankgiro-files.",
+  "description": "Tools to parse and generate bankgiro-files.",
   "require": {
     "php": "^7.0"
   },
